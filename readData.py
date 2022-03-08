@@ -13,11 +13,11 @@ theta = dat[:,0]
 cts = dat[:,1]
 
 def lor(x,B,G,mu):
-    lor = B*G/(2*np.pi*( (x - mu)**2 + (0.5*G)**2) )
+    lor = np.abs(B)*G/(2*np.pi*( (x - mu)**2 + (0.5*G)**2) )
     return lor
 
 def gaus(x,A,mu,sig):
-    gaus = A*(np.exp(-0.5*(x - mu)**2/sig**2))/(sig*np.sqrt(np.pi*2))
+    gaus = np.abs(A)*(np.exp(-0.5*(x - mu)**2/sig**2))/(sig*np.sqrt(np.pi*2))
     return gaus
 
 def gaus_and_lor(x,A,B,G, mu, sig, c):
@@ -36,11 +36,13 @@ if True:
     plt.ylabel("Intensity [counts]")
     plt.show()
 
-def fit_and_plot(lim, p0, plot = True, plot_savepath=None):
+def fit_and_plot(lim, p0, bounds, plot = True, plot_savepath=None):
 
     clip_dat = np.array([i for i in dat if (i[0]>lim[0] and i[0]<lim[1])]).T
-    pars, cov = curve_fit(gaus_and_lor, clip_dat[0], clip_dat[1], p0=p0)
-
+    pars, cov = curve_fit(gaus_and_lor, clip_dat[0], clip_dat[1], p0=p0, bounds=bounds)
+    
+    print(pars)
+    
     errs = np.sqrt(clip_dat[1])
     fit = gaus_and_lor(clip_dat[0], *pars)
     res = clip_dat[1] - fit
@@ -82,11 +84,19 @@ p4 = 90
 p5 = 95
 
 pars = [
-    [1000,1000,0.5,p1,0.5, 5],
+    [800,800,0.5,p1,0.5, 5],
     [500,500,0.5,p2,0.5, 5],
     [200,200,0.5,p3,0.5, 5],
     [100,100,0.5,p4,0.5, 5],
     [50,50,0.5,p5,0.5, 5]
+]
+
+bounds = [
+([100,0,0,0,0,0],[np.inf, np.inf, np.inf, np.inf, 1, np.inf]),
+([100,0,0,0,0,0],[np.inf, np.inf, np.inf, np.inf, 1, np.inf]),
+([100,0,0,0,0,0],[np.inf, np.inf, np.inf, np.inf, 1, np.inf]),
+([1,0,0,0,0,0],[np.inf, np.inf, np.inf, np.inf, 1, np.inf]),
+([1,0,0,0,0,0],[np.inf, np.inf, np.inf, np.inf, 1, np.inf])
 ]
 
 lims = [
@@ -98,4 +108,4 @@ lims = [
 ]
 
 for i in range(len(pars)):
-    fit_and_plot(lims[i],pars[i], plot_savepath=f"peak_{i}.png")
+    fit_and_plot(lims[i], pars[i], bounds[i], plot_savepath=f"peak_{i}.png")
