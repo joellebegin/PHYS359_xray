@@ -56,14 +56,14 @@ def fit_and_plot(lim, p0, plot = True, plot_savepath=None):
         fig, ax = plt.subplots(nrows=2, ncols = 1, gridspec_kw={'height_ratios': [3,1]})
         plt.subplots_adjust(hspace=0)
 
-        ax[0].errorbar(clip_dat[0], clip_dat[1], yerr = errs, color = "k", linestyle = "", marker = ".", label = str(chi))
+        ax[0].errorbar(clip_dat[0], clip_dat[1], yerr = errs, color = "k", linestyle = "", marker = ".", label = "Chi^2: %f"%(chi), capsize=2)
         ax[0].plot(thet_linspace, fit_linsp)
         # ax[0].plot(thet2, gaus(thet2, pars[0], pars[3],pars[4]) + pars[5], label = "gaussian")
         # ax[0].plot(thet2, lor(thet2, pars[1], pars[2], pars[3]) + pars[5], label ="lor", color = "red")
         ax[0].set_ylabel("Intensity [counts]")
         ax[0].legend()
 
-        ax[1].errorbar(clip_dat[0], res, yerr = errs, ls = " ", marker = ".")
+        ax[1].errorbar(clip_dat[0], res, yerr = errs, ls = " ", marker = ".", capsize=2)
         ax[1].set_xlabel("2*theta [deg]")
         ax[1].set_ylabel("Residuals")
         ax[1].hlines(xmin = lim[0], xmax = lim[1], y = 0, color = "k")
