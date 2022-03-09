@@ -1,1 +1,1 @@
-# PHYS359_xray
+# PHYS 359 X-ray Diffraction Code Base
