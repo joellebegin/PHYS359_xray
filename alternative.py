@@ -122,7 +122,12 @@ ax[1].hlines(xmin = dat[:,0][0], xmax = dat[:,0][-1], y = 0, color = "k")
 ax[0].scatter(dat[:,0][peaks_found],dat[:,1][peaks_found],marker='*')
 
 ax[1].set_xlim(dat[:,0][0],dat[:,0][-1])
-plt.savefig('full_fit.png')
+plt.savefig('figures/full_fit.png')
+
+# save model result
+
+from lmfit.model import save_modelresult
+save_modelresult(output, 'output/Cu_03-09-20.sav')
 
 
 
