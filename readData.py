@@ -102,7 +102,7 @@ def generate_model(spec):
     return composite_model, params
 
 
-def fit_one_peak(lims):
+def fit_one_peak(lims, fig_savename):
     '''
     Fits just one peak. 
 
@@ -159,7 +159,7 @@ def fit_one_peak(lims):
     ax[1].hlines(xmin = clip_dat[0][0], xmax = clip_dat[0][-1], y = 0, color = "k")
 
     ax[0].scatter(clip_dat[0][peaks_found],clip_dat[1][peaks_found],marker='*')
-    plt.show()
+    plt.savefig(fig_savename, bbox_inches = "tight")
 
 
 
@@ -179,4 +179,5 @@ lims = [
     [p5-win_len,p5+win_len]
 ]
 
-print(fit_one_peak(lims[1]))
+for i,lim in enumerate(lims):
+    fit_one_peak(lim, fig_savename=f"figures/peak_{i}_voight.png")
