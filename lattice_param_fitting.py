@@ -39,7 +39,7 @@ for i in range(len(fits)):
     popt,pcov=curve_fit(linear,angles[i],miller*lam/2,p0=[3.61,0],
                     sigma=err_lam*miller/2*5,absolute_sigma=True)
     x=np.linspace(15,55,1000)
-    label = names[i] + r': $a=$ ' + str(np.round(popt[0],5)) + ' $\pm$ ' + str(np.round(np.sqrt(pcov[0][0]),6))
+    label = names[i] + r': $a=$ ' + str(np.round(popt[0],5)) + ' $\pm$ ' + str(np.round(np.sqrt(pcov[0][0]),6)) + ' $\AA$'
     ax[0].plot(np.sin(x*np.pi/180),linear(x,*popt),label=label,color=color[i])
     ax[1].errorbar(np.sin(angles[i]*np.pi/180),miller*lam/2-linear(angles[i],*popt),
                yerr=err_lam*miller/2,xerr=np.cos(angles[i]*np.pi/180)*np.pi/180*errs[i]/2,
