@@ -17,7 +17,7 @@ for i,material in enumerate(materials):
         fits[i] = pickle.load(handle)
     
     angles[i] = np.array([fits[i]['popt'][j][1] for j in range(len(fits[i]['popt']))])/2
-    errs[i] = np.array([fits[i]['pcov'][j][1][1] for j in range(len(fits[i]['pcov']))])
+    errs[i] = np.array([fits[i]['pcov'][j][1][1] for j in range(len(fits[i]['pcov']))])/2
 
 fig, ax = plt.subplots(nrows=2, ncols = 1, gridspec_kw={'height_ratios': [3,1]}, figsize=(10,5))
 plt.subplots_adjust(hspace=0)
