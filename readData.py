@@ -9,18 +9,25 @@ def Gaussian(x, *p):
     A, x0, sigma, C = p
     return A*(np.sqrt(2*np.pi*sigma))*np.exp(-(x-x0)**2/(2*sigma**2))+C
 
-def Lorentzian(x, *p):
-    A, x0, gamma, C = p
-    return A/np.pi*gamma/((x-x0)**2+gamma**2)+C
+def Gaussian(x, *p):
+    A, x0, sigma, C = p
+    return A*(np.sqrt(2*np.pi*sigma))*np.exp(-(x-x0)**2/(2*sigma**2))+C
 
-def voigt(x,A,x0,sigma, gamma,C):
-    G = np.fft.fft(Gaussian(x,1,x0,sigma,C))
-    L = np.fft.fft(Lorentzian(x,1,x0,gamma,C))
-    V = A*np.real(np.fft.fftshift(np.fft.ifft(G*L)))
+def Lorentzian(x, *p):
+    B, x0, gamma, C = p
+    return B/np.pi*gamma/((x-x0)**2+gamma**2)+C
+
+def voigt(x,A,B,x0,sigma, gamma,C):
+    #G = np.fft.fft(Gaussian(x,1,x0,sigma,C))
+    #L = np.fft.fft(Lorentzian(x,1,x0,gamma,C))
+    #V = A*np.real(np.fft.fftshift(np.fft.ifft(G*L)))
+    G=Gaussian(x,A,x0,sigma,C)
+    L=Lorentzian(x,B,x0,gamma,C)
+    V = G + L
     return V
 
 def fit_peak(dat,bds,p0,plot=True,filename=None):
-    # p0 = A,x0,sigma,gamma,C
+    # p0 = A,B,x0,sigma,gamma,C
     cut = dat[np.argmin(np.abs(dat[:,0]-bds[0])):np.argmin(np.abs(dat[:,0]-bds[1]))]
     popt,pcov = curve_fit(voigt,cut[:,0],cut[:,1],p0,maxfev=10000)
     if plot==True:
@@ -51,7 +58,8 @@ def fit_n_peaks(data,bds,mus,amps,material_name):
 
     for i in range(len(bds)):
         path = 'figures/' + material_name + f'/peak_{i}.png'
-        cut_i,popt_i,pcov_i = fit_peak(data,bds[i],[amps[i],mus[i],1,1,.1],plot=True,filename=path)
+        cut_i,popt_i,pcov_i = fit_peak(data,bds[i],[amps[i],amps[i],mus[i],1,1,.1]
+                                        ,plot=True,filename=path)
         cut[i]=cut_i
         popt[i]=popt_i
         pcov[i]=pcov_i
@@ -70,7 +78,7 @@ def fit_n_peaks(data,bds,mus,amps,material_name):
 
 Cu_dat = np.loadtxt("data/Cu_09-03-22.UXD")
 
-bds = [[41,45],[48,52],[72,76],[88,92],[93,98]]
+bds = [[42,44],[48,52],[72,76],[88,92],[93,98]]
 mus = [43.5,50.5,74.2,90,95]
 amps = [100,10,10,10,2]
 
