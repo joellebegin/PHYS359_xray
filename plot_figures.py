@@ -10,9 +10,9 @@ from readData import voigt
 with open('fits/Cu.pickle', 'rb') as handle:
     Cu_fit = pickle.load(handle)
 
-cut=Cu_fit['cut'][1]
-popt=Cu_fit['popt'][1]
-pcov=Cu_fit['pcov'][1]
+cut=Cu_fit['cut'][2]
+popt=Cu_fit['popt'][2]
+pcov=Cu_fit['pcov'][2]
 
 fig, ax = plt.subplots(nrows=2, ncols = 1, gridspec_kw={'height_ratios': [3,1]}, figsize=(6,6),sharex=True)
 plt.subplots_adjust(hspace=0)
@@ -33,7 +33,7 @@ ax[1].set_xlabel(r"$2\theta$ [deg]",fontsize=20)
 ax[1].set_ylabel("Residuals",fontsize=20)
 ax[0].tick_params(axis='both', which='major', labelsize=15)
 ax[1].tick_params(axis='both', which='major', labelsize=15)
-ax[0].set_xlim(popt[2]-1,popt[2]+1)
+ax[0].set_xlim(x[0],x[-1])
 plt.savefig('figures/interim_1/peak_fit.png',dpi=300,bbox_inches='tight')
 plt.clf()
 
@@ -91,9 +91,7 @@ ax[1].plot(percent_Cu,a-vegard(x_Cu),color='k',ls='--')
 
 for j in range(len(fits)):
         
-    label = str(np.round(a[j],5)) + ' (' + str(int(1e6*a_err[j])) + ') $\AA$'
-    if j==4:
-        label = '3.62130' + ' (' + str(int(1e6*a_err[j])) + ') $\AA$'
+    label = str(format(a[j], '.5f')) + ' (' + str(int(1e6*a_err[j])) + ') $\AA$'
     ax[0].errorbar(percent_Cu[j],a[j],label=label,color=color[j],yerr=a_err[j],
                ls='--',marker='.',markersize=10)
     ax[0].set_ylabel(r'$a$ [$\AA$]',fontsize=20)

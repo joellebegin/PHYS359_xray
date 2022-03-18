@@ -6,21 +6,14 @@ from scipy.optimize import curve_fit
 import pickle
 
 def Gaussian(x, *p):
-    A, x0, sigma, C = p
-    return A*(np.sqrt(2*np.pi*sigma))*np.exp(-(x-x0)**2/(2*sigma**2))+C
-
-def Gaussian(x, *p):
-    A, x0, sigma, C = p
+    A, x0, sigma, C = np.abs(p)
     return A*(np.sqrt(2*np.pi*sigma))*np.exp(-(x-x0)**2/(2*sigma**2))+C
 
 def Lorentzian(x, *p):
-    B, x0, gamma, C = p
+    B, x0, gamma, C = np.abs(p)
     return B/np.pi*gamma/((x-x0)**2+gamma**2)+C
 
 def voigt(x,A,B,x0,sigma, gamma,C):
-    #G = np.fft.fft(Gaussian(x,1,x0,sigma,C))
-    #L = np.fft.fft(Lorentzian(x,1,x0,gamma,C))
-    #V = A*np.real(np.fft.fftshift(np.fft.ifft(G*L)))
     G=Gaussian(x,A,x0,sigma,C)
     L=Lorentzian(x,B,x0,gamma,C)
     V = G + L
@@ -37,7 +30,7 @@ def fit_peak(dat,bds,p0,plot=True,filename=None):
         ax[0].errorbar(cut[:,0],cut[:,1],yerr=errs,ls='')
         mask = errs != 0
         fit = voigt(cut[:,0],*popt)
-        chi2 = np.sum((cut[:,1][mask]-fit)**2/errs[mask])/(len(cut[mask])-len(p0))
+        chi2 = np.sum((cut[:,1][mask]-fit[mask])**2/errs[mask])/(len(cut[mask])-len(p0))
         ax[0].plot(cut[:,0],fit,color='r',label=np.round(chi2,2))
         ax[0].set_ylabel("Intensity [counts]")
         ax[0].legend()
@@ -74,13 +67,21 @@ def fit_n_peaks(data,bds,mus,amps,material_name):
     #with open('filename.pickle', 'rb') as handle:
     #    b = pickle.load(handle)
 
+# don't need this code to run everytime we use the above functions, fits are done
+
+'''width=1
+
 # FIT PURE CU DATA
 
 Cu_dat = np.loadtxt("data/Cu_09-03-22.UXD")
 
-bds = [[42,44],[48,52],[72,76],[88,92],[93,98]]
-mus = [43.5,50.5,74.2,90,95]
-amps = [100,10,10,10,2]
+mus = [43.35,50.5,74.2,90,95.3]
+amps = [1000,10,10,10,2]
+bds=[[0,0]]*len(mus)
+for i in range(len(bds)):
+    bds[i] = [mus[i]-width,mus[i]+width]
+bds[0] = [mus[0]-0.6,mus[0]+0.6]
+bds[1] = [mus[1]-0.6,mus[1]+0.6]
 
 fit_n_peaks(Cu_dat,bds,mus,amps,'Cu')
 
@@ -88,9 +89,13 @@ fit_n_peaks(Cu_dat,bds,mus,amps,'Cu')
 
 Ni_dat = np.loadtxt("data/Ni_09-03-22.UXD")
 
-bds = [[41,48],[48,55],[74,79],[91,95],[97.5,99.5]]
-mus = [44.5,52,76.5,93,98.5]
+mus = [44.5,51.8,76.4,93,98.5]
 amps = [1000,10,10,10,5]
+bds=[[0,0]]*len(mus)
+for i in range(len(bds)):
+    bds[i] = [mus[i]-width,mus[i]+width]
+bds[0] = [mus[0]-0.6,mus[0]+0.6]
+bds[1] = [mus[1]-0.6,mus[1]+0.6]
 
 fit_n_peaks(Ni_dat,bds,mus,amps,'Ni')
 
@@ -98,9 +103,12 @@ fit_n_peaks(Ni_dat,bds,mus,amps,'Ni')
 
 Cu25_Ni75_dat = np.loadtxt("data/Cu25_Ni75_09-03-22.UXD")
 
-bds = [[41,48],[48,55],[73,79],[90,94],[96,99.5]]
-mus = [44,52,76,92.5,97.5]
-amps = [1000,10,10,10,5]
+mus = [44.3,51.6,75.9,92.35,97.75]
+amps = [600,10,10,10,5]
+bds=[[0,0]]*len(mus)
+for i in range(len(bds)):
+    bds[i] = [mus[i]-width,mus[i]+width]
+bds[0] = [mus[0]-0.8,mus[0]+0.8]
 
 fit_n_peaks(Cu25_Ni75_dat,bds,mus,amps,'Cu25_Ni75')
 
@@ -108,9 +116,12 @@ fit_n_peaks(Cu25_Ni75_dat,bds,mus,amps,'Cu25_Ni75')
 
 Cu50_Ni50_dat = np.loadtxt("data/Cu50_Ni50_10-03-22.UXD")
 
-bds = [[41,47],[48,55],[73,79],[90,94],[95,99]]
-mus = [44,51,75,92,97]
+mus = [44,51.3,75.35,91.65,97]
 amps = [500,100,100,10,5]
+bds=[[0,0]]*len(mus)
+for i in range(len(bds)):
+    bds[i] = [mus[i]-width,mus[i]+width]
+bds[0] = [mus[0]-0.8,mus[0]+0.8]
 
 fit_n_peaks(Cu50_Ni50_dat,bds,mus,amps,'Cu50_Ni50')
 
@@ -118,8 +129,12 @@ fit_n_peaks(Cu50_Ni50_dat,bds,mus,amps,'Cu50_Ni50')
 
 Cu75_Ni25_dat = np.loadtxt("data/Cu75_Ni25_10-03-22.UXD")
 
-bds = [[41,46],[48,55],[73,77],[88.5,92.5],[94.5,98.5]]
-mus = [43.5,51,75,90.5,96.5]
+mus = [43.7,50.85,74.8,90.85,96.2]
 amps = [500,100,50,10,5]
+bds=[[0,0]]*len(mus)
+for i in range(len(bds)):
+    bds[i] = [mus[i]-width,mus[i]+width]
+bds[0] = [mus[0]-0.8,mus[0]+0.8]
+bds[1] = [mus[1]-0.8,mus[1]+0.8]
 
-fit_n_peaks(Cu75_Ni25_dat,bds,mus,amps,'Cu75_Ni25')
+fit_n_peaks(Cu75_Ni25_dat,bds,mus,amps,'Cu75_Ni25')'''
