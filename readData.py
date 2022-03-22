@@ -44,6 +44,7 @@ def fit_peak(dat,bds,p0,plot=True,filename=None):
     return cut,popt,pcov
 
 def fit_n_peaks(data,bds,mus,amps,material_name):
+    '''fits single peaks in a row'''
 
     popt=[0]*len(bds)
     pcov=[0]*len(bds)
@@ -68,6 +69,7 @@ def fit_n_peaks(data,bds,mus,amps,material_name):
     #    b = pickle.load(handle)
 
 # don't need this code to run everytime we use the above functions, fits are done
+
 
 '''width=1
 
