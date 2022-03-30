@@ -66,14 +66,14 @@ def fit_multiple_peaks(dat,bds,p0,fit_func,plot=True,filename=None):
         ax[1].set_ylabel("Residuals")
         if filename is not None:
             plt.savefig(filename, bbox_inches = "tight")
-            plt.show()
+            # plt.show()
         else:
             plt.show()
 
     return cut,popt,pcov
 
 
-def fit_peaks(dat, pars, bounds,fig_savepath,file_savepath):
+def fit_peaks(dat, pars, bds,fig_savepath,file_savepath):
     for i,p in enumerate(pars):
         if len(p)==7:
             cut,popt,pcov = fit_multiple_peaks(dat, fit_func = voigt, bds=bds[i],p0=pars[i],filename=fig_savepath+ f"peak_{i}.png")
@@ -89,7 +89,7 @@ def fit_peaks(dat, pars, bounds,fig_savepath,file_savepath):
                                                     [popt[14],pcov[14,14]]]) )
 
 
-sn=True
+sn=False
 
 if sn:
     Sn_dat = np.loadtxt('data/Sn_10-03-22.UXD')
